@@ -17,10 +17,11 @@ emailBase = "C'est le moment d'acheter :\n\n" #Début du corps du email
 emailContent = "" #Contenu du mail
 emailSignature = "\n Cordialement,\n Le bot" #Signature du mail
 sendEmail = False #Variable de contrôle permettant de savoir s'il faut envoyer l'email
-
-#Liste des URLs des jeux dont je souhaite surveiller le prix
+a = 0
+#Liste des URLs des produits dont je souhaite surveiller le prix
 product_urls = [
 "https://www.jdsports.fr/product/blanc-the-north-face-aconcagua-down-jacket/16228080_jdsportsfr/",
+"https://www.jdsports.de/product/weiss-the-north-face-aconcagua-down-jacke-herren/16228080_jdsportsde/",
 # "https://www.jdsports.fr/product/bleu-the-north-face-sweat--capuche-multi-dome-homme/16484779_jdsportsfr/",
 
 ]
@@ -33,28 +34,29 @@ product_dispM = [""]*len(product_urls)
 #Boucle qui parcourt la liste des URLs et qui récupère le nom et le boutton M
 for i in range(len(product_urls)):
     page = requests.get(product_urls[i])
-#    time.sleep(10)
     parser = BeautifulSoup(page.content,'html.parser')
     product_names[i] = parser.find(class_="productRight").h1.text
     product_dispM = parser.findAll(class_="btn options-loading")
     
-
-
-    # print(product_dispM)
-    # print(len(product_dispM))
-
-    while (len(product_dispM) <= 2):
+    while (len(product_dispM) < 2):
+        for i in range(len(product_urls)):
+            page = requests.get(product_urls[i])
+            parser = BeautifulSoup(page.content,'html.parser')
+            product_names[i] = parser.find(class_="productRight").h1.text
+            product_dispM = parser.findAll(class_="btn options-loading")
+        
+        a = a+1
+        print(a)
         print("il y en a moins que deux")
         time.sleep(900)
     else:
         print("il y en a plus deux")
-        emailContent = emailContent + "C'est le moment ! "
+        emailContent = emailContent + "la doudoune"
         sendEmail = True
         print("L'email à été envoyé")
         time.sleep(5)
         break
-        
-            
+
 
 #Boucle qui vérifie si le boutton M existe sur les produits dans la liste URLS
 # for j in range (len(product_names)):
